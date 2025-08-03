@@ -1,48 +1,696 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="siteApp()" x-init="init()" class="scroll-smooth h-full">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mayothi Beauty Studio</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+  <title>Mayothi's Beauty Studio</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            body: ['Poppins', 'sans-serif'],
+            signature: ['"Dancing Script"', 'cursive'],
+          },
+          colors: {
+            'primary-gray': '#4b5563',
+            'secondary-gray': '#6b7280',
+            'text-color': '#e5e7eb',
+            'bg-color': '#111827',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Alpine.js -->
+  <script src="https://unpkg.com/alpinejs" defer></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      background-image: url('assets/images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Poppins', sans-serif;
+      color: #e5e7eb;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    .signature-title {
+      font-family: 'Dancing Script', cursive;
+    }
+
+    .gradient-text {
+      background-image: linear-gradient(to right, #9ca3af, #4b5563);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-overlay {
+      display: none;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .gallery-modal-content {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border: 1px solid #374151;
+    }
+
+    .gallery-img-thumb {
+      height: 128px;
+      object-fit: cover !important;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .gallery-img-thumb:hover {
+      transform: scale(1.05);
+    }
+
+    .slider-img-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-height: 70vh;
+    }
+
+    .slider-img {
+      max-height: 70vh;
+      width: 100%;
+      object-fit: contain;
+      margin: 0 auto;
+      border-radius: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+      .service-card {
+        max-width: 100%;
+      }
+
+      .gallery-modal-content {
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+
+      .slider-img-container,
+      .slider-img {
+        max-height: 50vh;
+      }
+
+      .gallery-img-thumb {
+        height: 96px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #bookingForm .grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    footer img {
+      width: 48px;
+      height: 48px;
+    }
+
+    footer a {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+    }
+  </style>
 </head>
-<body>
-  <header class="header">
-    <img src="assets/images/logo.png" alt="Mayothi Logo" class="logo" />
-    <nav>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#booking">Book Now</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <main>
-    <section class="hero">
-      <h1>Unleash Your Inner Glow</h1>
-      <p>Beauty services by Khanyi Raphaka, tailored just for you.</p>
-    </section>
+<body class="flex flex-col min-h-screen">
 
-    <section id="services" class="services">
-      <!-- Service cards will go here -->
-    </section>
+  <!-- Header -->
+<header
+  class="flex flex-col md:flex-row justify-between items-center px-6 py-4 fixed w-full z-50 bg-black/60 backdrop-blur-sm shadow-md">
+  <div class="flex items-center space-x-4 mb-4 md:mb-0">
+    <div class="rounded-full bg-gray-500 bg-opacity-40 p-1">
+      <img src="assets/images/logo.png" alt="Mayothi Logo" class="w-16 h-16 rounded-full object-cover"
+        onerror="this.onerror=null;this.src='https://placehold.co/64x64/4b5563/FFFFFF?text=MBS'" />
+    </div>
+    <h1
+      class="text-3xl font-bold signature-title bg-gradient-to-r from-gray-200 via-gray-400 to-gray-600 bg-clip-text text-transparent whitespace-nowrap">
+      MAYOTHI'S BEAUTY STUDIO
+    </h1>
+  </div>
 
-    <section id="booking" class="booking">
-      <!-- Booking form will go here -->
-    </section>
+  <nav class="space-x-6 text-gray-300 font-semibold hidden md:flex">
+    <a href="#home" class="hover:text-white transition duration-300">Home</a>
+    <a href="#about" @click.prevent="scrollToSection('about')" class="hover:text-white transition duration-300">About</a>
+    <a href="#services" class="hover:text-white transition duration-300">Services</a>
+    <a href="#book" class="hover:text-white transition duration-300">Book Now</a>
+    <a href="#contact" class="hover:text-white transition duration-300">Contact</a>
+  </nav>
 
-    <section id="contact" class="contact">
-      <!-- Contact info will go here -->
-    </section>
-  </main>
+  <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="md:hidden text-white focus:outline-none"
+    aria-label="Toggle Mobile Menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </button>
+</header>
 
-  <footer class="footer">
-    <p>© 2025 Mayothi Beauty Studio | Designed by Palesa Malatshi</p>
-  </footer>
+<!-- Mobile Menu -->
+<div x-show="isMobileMenuOpen" @click.away="isMobileMenuOpen = false"
+  class="md:hidden fixed top-20 left-0 right-0 z-40 bg-black/70 text-center shadow-lg pt-4"
+  x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4"
+  x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-300"
+  x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
+  <a href="#home" @click="isMobileMenuOpen=false" class="block py-2 px-4 hover:bg-black/70 border-b border-gray-700">Home</a>
+  <a href="#about" @click="isMobileMenuOpen=false; scrollToSection('about')"
+    class="block py-2 px-4 hover:bg-black/70 border-b border-gray-700">About</a>
+  <a href="#services" @click="isMobileMenuOpen=false"
+    class="block py-2 px-4 hover:bg-black/70 border-b border-gray-700">Services</a>
+  <a href="#book" @click="isMobileMenuOpen=false"
+    class="block py-2 px-4 hover:bg-black/70 border-b border-gray-700">Book Now</a>
+  <a href="#contact" @click="isMobileMenuOpen=false" class="block py-2 px-4 hover:bg-black/70">Contact</a>
+</div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+<!-- Main Content -->
+<main class="flex-grow mt-20">
+  <!-- Home Section -->
+  <section id="home" class="py-20 px-6 text-center text-white bg-black/70">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-wide signature-title">Where Beauty Meets Purpose</h2>
+      <p class="text-lg md:text-xl leading-relaxed text-gray-300 mb-6">
+        A vibrant beauty studio born in Tsakane, transforming challenges into confidence through nails, make-up,
+        weave installations, and body sculpting.
+      </p>
+      <a href="#about" @click.prevent="scrollToSection('about')"
+        class="inline-block mt-4 bg-gray-600 hover:bg-gray-500 text-white font-medium py-2 px-6 rounded-full transition duration-300">
+        Read More
+      </a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="px-4 py-16 bg-black/70" x-show="showAbout" x-transition>
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-10">
+      <img src="assets/images/khanyi.jpg" alt="Khanyisile Mayothi Raphaka"
+        class="w-full md:w-1/2 rounded shadow-lg object-cover"
+        onerror="this.onerror=null;this.src='https://placehold.co/600x400/4b5563/FFFFFF?text=Khanyi'" />
+      <div class="md:w-1/2">
+        <h3 class="text-2xl font-bold mb-4 text-gray-400">Meet Khanyisile Mayothi Raphaka</h3>
+        <p class="text-gray-300">
+          In the midst of uncertainty, Khanyi turned challenge into triumph. As a self-made entrepreneur with a
+          powerful vision, she founded Mayothi's Beauty Studio to empower, uplift, and beautify her community.
+          Through her journey, she aims to provide beauty training, create employment, and bring hope. Her name
+          isn’t just a brand—it’s a legacy rooted in resilience and passion.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+<section id="services" class="px-4 py-16 bg-black/70">
+  <h2 class="text-3xl font-bold text-center mb-10 gradient-text">Our Services</h2>
+  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <template x-for="service in services" :key="service.id">
+      <div
+        class="service-card bg-black/70 rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-transform duration-300 flex flex-col items-center p-4"
+        @click="openGalleryModal(service.id)">
+        <div class="w-full h-48 flex items-center justify-center mb-4">
+          <img :src="service.coverImage" :alt="service.title"
+            class="max-w-full max-h-full object-contain"
+            :onerror="`this.onerror=null;this.src='https://placehold.co/600x400/6b7280/FFFFFF?text=${service.title}'`">
+        </div>
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold text-gray-400 mb-2" x-text="service.title"></h3>
+          <p class="text-gray-400" x-text="service.description"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>
+
+<!-- Booking Section -->
+<section id="book" class="px-4 py-16 bg-black/70">
+  <h2 class="text-3xl font-bold text-center mb-10 gradient-text">Book Your Appointment</h2>
+  <div class="max-w-xl mx-auto bg-black/70 rounded-lg shadow-xl overflow-hidden p-6">
+    <form id="bookingForm" class="space-y-4" @submit.prevent="submitBooking">
+      <!-- Name -->
+      <div>
+        <label for="name" class="block text-gray-300 font-medium mb-1">Your Name</label>
+        <input type="text" id="name" name="name" x-model="bookingForm.name"
+          class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required />
+      </div>
+      <!-- Phone -->
+      <div>
+        <label for="phone" class="block text-gray-300 font-medium mb-1">WhatsApp Number</label>
+        <input type="tel" id="phone" name="phone" x-model="bookingForm.phone"
+          class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required />
+      </div>
+      <!-- Service -->
+      <div>
+        <label for="service" class="block text-gray-300 font-medium mb-1">Service</label>
+        <select id="service" name="service" x-model="bookingForm.serviceId" @change="handleServiceChange"
+          class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required>
+          <option value="">Select a service...</option>
+          <template x-for="service in services" :key="service.id">
+            <option :value="service.id" x-text="service.title"></option>
+          </template>
+        </select>
+      </div>
+      <!-- Price Options -->
+      <div x-show="showPriceOptions" x-transition>
+        <label for="price" class="block text-gray-300 font-medium mb-1">Choose Option</label>
+        <select id="price" name="price" x-model="bookingForm.priceId" @change="updateBookingPrice"
+          class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required>
+          <option value="">Select an option...</option>
+          <template x-for="price in selectedService.prices" :key="price.id">
+            <option :value="price.id" x-text="price.name + ' - R' + price.amount"></option>
+          </template>
+        </select>
+      </div>
+      <!-- House Call -->
+      <div class="flex items-center space-x-2">
+        <input type="checkbox" id="houseCall" name="houseCall" x-model="bookingForm.houseCall"
+          @change="toggleAddressContainer"
+          class="form-checkbox h-5 w-5 text-gray-600 bg-gray-700 border-gray-600 rounded" />
+        <label for="houseCall" class="text-gray-300 font-medium">House Call</label>
+      </div>
+      <!-- Address -->
+      <div x-show="showAddressInput" x-transition>
+        <label for="address" class="block text-gray-300 font-medium mb-1">Your Address</label>
+        <input type="text" id="address" name="address" x-model="bookingForm.address"
+          class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500" />
+      </div>
+      <!-- Date and Time -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="date" class="block text-gray-300 font-medium mb-1">Date</label>
+          <input type="date" id="date" name="date" x-model="bookingForm.date"
+            class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            required />
+        </div>
+        <div>
+          <label for="time" class="block text-gray-300 font-medium mb-1">Time</label>
+          <select id="time" name="time" x-model="bookingForm.time"
+            class="w-full p-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            required>
+            <option value="">Select time</option>
+            <option>09:00 AM</option>
+            <option>11:00 AM</option>
+            <option>01:00 PM</option>
+            <option>03:00 PM</option>
+            <option>05:00 PM</option>
+          </select>
+        </div>
+      </div>
+      <!-- Price Total -->
+      <div class="text-lg font-bold text-gray-200 mt-4 text-center">
+        Total Price: R<span x-text="totalPrice"></span>
+      </div>
+      <!-- Submit -->
+      <button type="submit"
+        class="w-full py-3 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-md shadow-lg transition duration-300">
+        Book Now
+      </button>
+    </form>
+    <div id="payment-container" class="mt-4 text-center"></div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="py-24 px-6 bg-black/70">
+  <div class="max-w-7xl mx-auto bg-black/70 rounded-2xl p-8 md:p-12">
+    <h2 class="text-4xl font-bold text-center gradient-text mb-4">Contact Us</h2>
+    <p class="text-center text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+      Ready to book? Have a question? Reach out to us through our social channels or by email.
+    </p>
+    <div class="flex flex-wrap justify-center gap-8 text-3xl">
+      <a href="https://wa.me/27610665969" target="_blank"
+        class="text-gray-300 hover:text-green-500 transition duration-300" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+      <a href="tel:+27676948811" class="text-gray-300 hover:text-gray-500 transition duration-300" aria-label="Phone">
+        <i class="fas fa-phone"></i>
+      </a>
+      <a href="mailto:khanyisileraphaka@gmail.com" class="text-gray-300 hover:text-gray-500 transition duration-300"
+        aria-label="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Booking Confirmation Modal (hidden by default) -->
+
+<div x-show="bookingModalOpen"
+     class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 scale-90"
+     x-transition:enter-end="opacity-100 scale-100"
+     x-transition:leave="transition ease-in duration-300"
+     x-transition:leave-start="opacity-100 scale-100"
+     x-transition:leave-end="opacity-0 scale-90"
+     style="display: none;">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-black text-center">
+    <h2 class="text-xl font-bold mb-4">Booking Confirmed!</h2>
+    <p class="mb-2"><strong>Service:</strong> <span x-text="selectedService.title"></span></p>
+    <p class="mb-2"><strong>Name:</strong> <span x-text="bookingForm.name"></span></p>
+    <p class="mb-2"><strong>Phone:</strong> <span x-text="bookingForm.phone"></span></p>
+    <p class="mb-2"><strong>Date:</strong> <span x-text="bookingForm.date"></span></p>
+    <p class="mb-2"><strong>Time:</strong> <span x-text="bookingForm.time"></span></p>
+    <p class="mb-2"><strong>Total:</strong> R<span x-text="totalPrice.toFixed(2)"></span></p>
+    <p class="mb-2 text-left"><strong>Payment Info:</strong><br>
+      EFT to KM Raphaka<br>
+      Capitec Account: 1644713334
+    </p>
+    <p class="text-red-600 mt-2 font-semibold">Please screenshot and send proof via WhatsApp.</p>
+    <button @click="bookingModalOpen = false"
+            class="mt-4 bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-md font-semibold transition duration-300">
+      Close
+    </button>
+  </div>
+</div>
+
+<!-- Gallery Modal -->
+
+<div x-show="isGalleryModalOpen" @click.away="closeGalleryModal"
+     class="modal-overlay fixed inset-0 bg-black/80 flex justify-center items-center z-50"
+     x-transition.opacity
+     style="display:none;">
+  <div 
+      x-show="isGalleryModalOpen" 
+      x-transition:enter="transition ease-out duration-300" 
+      x-transition:enter-start="opacity-0 scale-90" 
+      x-transition:enter-end="opacity-100 scale-100" 
+      x-transition:leave="transition ease-in duration-300" 
+      x-transition:leave-start="opacity-100 scale-100" 
+      x-transition:leave-end="opacity-0 scale-90"
+      class="gallery-modal-content">
+    <div class="flex justify-between items-center pb-4 border-b border-gray-700">
+      <h3 class="text-2xl font-bold text-gray-300">Gallery for <span x-text="selectedService.title"></span></h3>
+      <button @click="closeGalleryModal"
+              class="text-gray-400 hover:text-white transition duration-300 focus:outline-none"
+              aria-label="Close gallery">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+             xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" 
+             stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+```
+<div x-show="selectedService.images && selectedService.images.length > 0" class="mt-4 flex-grow relative">
+  <!-- Large Image Slider -->
+  <div class="slider-img-container relative">
+    <img :src="selectedService.images[currentImageIndex]" alt="Gallery Image" 
+         class="slider-img rounded-lg shadow-lg max-w-full mx-auto"
+         :onerror="`this.onerror=null;this.src='https://placehold.co/800x600/111827/e5e7eb?text=Image+Not+Found'`" />
+    <!-- Previous Button -->
+    <button @click="changeImage(-1)"
+            class="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition duration-300 focus:outline-none"
+            aria-label="Previous image">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+           xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" 
+           stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <!-- Next Button -->
+    <button @click="changeImage(1)"
+            class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition duration-300 focus:outline-none"
+            aria-label="Next image">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+           xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" 
+           stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+  </div>
+
+  <!-- Thumbnail Grid -->
+  <div class="mt-6">
+    <h4 class="text-xl font-semibold text-gray-300 mb-2 text-center">Browse Gallery</h4>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <template x-for="(image, index) in selectedService.images" :key="index">
+        <div class="gallery-thumb-wrapper cursor-pointer" @click="currentImageIndex = index">
+          <img :src="image" alt="Thumbnail" 
+               class="gallery-img-thumb rounded-md"
+               :class="{'border-2 border-gray-500 shadow-lg': index === currentImageIndex}" 
+               :onerror="`this.onerror=null;this.src='https://placehold.co/150x150/111827/e5e7eb?text=Image+Not+Found'`" />
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="#book" @click.prevent="closeGalleryModalAndScroll"
+       class="inline-block px-8 py-3 bg-gray-600 text-white font-bold rounded-full hover:bg-gray-500 transition duration-300 shadow-lg transform hover:scale-105">
+      Book This Service
+    </a>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Footer -->
+
+<footer class="bg-black/70 text-white py-8 mt-auto">
+  <div class="container mx-auto px-4 text-center space-y-4">
+    <div class="flex justify-center">
+      <img src="assets/images/logo.png" alt="Mayothi Logo" class="w-16 h-16 rounded-full border-2 border-gray-500" onerror="this.onerror=null;this.src='https://placehold.co/48x48/4b5563/FFFFFF?text=MBS'" />
+    </div>
+    <div class="flex justify-center gap-6 text-sm flex-wrap">
+      <a href="https://wa.me/27610665969" target="_blank" class="hover:underline">WhatsApp</a>
+      <a href="tel:+27676948811" class="hover:underline">Call</a>
+      <a href="mailto:khanyisileraphaka@gmail.com" class="hover:underline">Email</a>
+      <a href="https://www.instagram.com/mayo.thisbeautystudio" target="_blank" class="hover:underline">Instagram</a>
+    </div>
+    <div class="text-xs text-gray-300">
+      Designed by Palesa Malatshi |
+      <a href="mailto:palesamalatshi22@gmail.com" class="hover:underline">palesamalatshi22@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('siteApp', () => ({
+      isMobileMenuOpen: false,
+      showAbout: false,
+      bookingModalOpen: false,
+      isGalleryModalOpen: false,
+      currentImageIndex: 0,
+      totalPrice: [],
+      showPriceOptions: false,
+      showAddressInput: false,
+      selectedService: {
+        id: '',
+        title: '',
+        images: [],
+        prices: []
+      },
+      bookingForm: {
+        name: '',
+        phone: '',
+        serviceId: '',
+        priceId: '',
+        houseCall: false,
+        address: '',
+        date: '',
+        time: ''
+      },
+      services: [
+        {
+          id: 'nails',
+          title: 'Nails',
+          description: 'Acrylic | Gel | Pedicures',
+          coverImage: 'assets/images/nails.jpg',
+          gallery: [
+            'assets/images/nails1.jpg',
+            'assets/images/nails2.jpg',
+            'assets/images/nails3.jpg',
+            'assets/images/nails4.jpg',
+            'assets/images/nails5.jpg',
+          ],
+          prices: [
+            { id: 'short-p', name: 'Short Plain', amount: 180 },              
+            { id: 'short-d', name: 'Short with Design', amount: 220 },                
+            { id: 'medium-p', name: 'Medium Plain', amount: 160 },           
+            { id: 'medium-d', name: 'Medium with Design', amount: 220 },               
+            { id: 'large-p', name: 'Large Plain', amount: 260 },              
+            { id: 'large-d', name: 'Large with Design', amount: 300 },        
+            { id: 'x-large-p', name: 'X-Large Plain', amount: 300 },
+            { id: 'x-large-d', name: 'X-Large with Desgin', amount: 350 },
+            { id: 'gel-pol', name: 'Gel Polish', amount: 140 },
+            { id: 'gel-lay', name: 'Gel Overlay', amount: 100 },
+            { id: 'buff-and-shine-p', name: 'Buff and Shine Plain', amount: 100 },
+            { id: 'buff-and-shine-d', name: 'Buff and Shine Design', amount: 160 },
+            { id: 'ped-gel', name: 'Pedicure Gel', amount: 120 },
+            { id: 'ped-acrylic', name: 'Pedicure Acrylic', amount: 160 },
+          ],
+        },
+        {
+          id: 'makeup',
+          title: 'Make-up',
+          description: 'Natural | Soft-Glam | Bridal',
+          coverImage: 'assets/images/makeup.jpg',
+          gallery: [
+            'assets/images/makeup1.jpg',
+            'assets/images/makeup2.jpg',
+            'assets/images/makeup3.jpg',
+          ],
+          prices: [
+            { id: 'natural-makeup', name: 'Natural Look', amount: 200 },
+            { id: 'soft-glam', name: 'Soft Glam', amount: 250 },
+            { id: 'bridal-makeup', name: 'Bridal', amount: 300 },
+            { id: 'bridal', name: 'Bridal', amount: 400 },
+          ],
+        },
+        {
+          id: 'hair',
+          title: 'Hair',
+          description: 'Weave Installations',
+          coverImage: 'assets/images/weave.jpg',
+          gallery: [
+            'assets/images/installation.jpg',
+            'assets/images/styled.jpg',
+          ],
+          prices: [
+            { id: 'weave-install', name: 'Weave Installation', amount: 250 },
+            { id: 'styled-weave-install', name: 'styled Weave Installation', amount: 300 },
+          ],
+        },
+        {
+          id: 'cavitation',
+          title: 'Cavitation Reduction',
+          description: 'Fat Reduction Therapy',
+          coverImage: 'assets/images/cavitation.jpg',
+          gallery: [
+            'assets/images/cavitation1.jpg',
+            'assets/images/cavitation2.jpg',
+          ],
+          prices: [
+            { id: 'one-sess-per', name: '1 Session', amount: 600 },
+            { id: 'three-sess-per', name: '3 Sessions', amount: 1500 },
+            { id: 'one-sess-per-pad', name: '1 Session with Lipopads', amount: 800 },
+            { id: 'three-sess-per-pad', name: '3 Sessions with Lipopads', amount: 2000 },
+            { id: 'one-sess-2peep', name: '1 Session 2 People', amount: 1000 },
+            { id: 'three-sess-2peep', name: '3 Sessions 2 People', amount: 1500 },
+            { id: 'one-sess-2peep-pad', name: '1 Session 2 People with Lipopads', amount: 2000 },
+            { id: 'three-sess-2peep-pad', name: '3 Sessions 2 People with Lipopads', amount: 4000 },
+          ],
+        }
+      ],
+
+      init() {
+        this.showAbout = false;
+      },
+
+      scrollToSection(sectionId) {
+        if(sectionId === 'about') this.showAbout = true;
+        const el = document.getElementById(sectionId);
+        if(el) el.scrollIntoView({ behavior: 'smooth' });
+      },
+
+      openGalleryModal(serviceId) {
+        const service = this.services.find(s => s.id === serviceId);
+        if(service) {
+          this.selectedService = {
+            id: service.id,
+            title: service.title,
+            images: service.gallery,
+            prices: service.prices
+          };
+          this.currentImageIndex = 0;
+          this.isGalleryModalOpen = true;
+        }
+      },
+
+      closeGalleryModal() {
+        this.isGalleryModalOpen = false;
+        this.selectedService = { id: '', title: '', images: [], prices: [] };
+      },
+
+      changeImage(direction) {
+        const total = this.selectedService.images.length;
+        let newIndex = this.currentImageIndex + direction;
+        if(newIndex < 0) newIndex = total - 1;
+        else if(newIndex >= total) newIndex = 0;
+        this.currentImageIndex = newIndex;
+      },
+
+      closeGalleryModalAndScroll() {
+        this.closeGalleryModal();
+        this.scrollToSection('book');
+        this.bookingForm.serviceId = this.selectedService.id;
+        this.handleServiceChange();
+      },
+
+      handleServiceChange() {
+        const service = this.services.find(s => s.id === this.bookingForm.serviceId);
+        if(service) {
+          this.selectedService = service;
+          this.bookingForm.priceId = '';
+          this.showPriceOptions = true;
+        } else {
+          this.showPriceOptions = false;
+          this.bookingForm.priceId = '';
+          this.selectedService = { id: '', title: '', images: [], prices: [] };
+        }
+        this.updateBookingPrice();
+      },
+
+      updateBookingPrice() {
+        let price = 0;
+        const service = this.services.find(s => s.id === this.bookingForm.serviceId);
+        if(service && this.bookingForm.priceId) {
+          const priceOption = service.prices.find(p => p.id === this.bookingForm.priceId);
+          if(priceOption) price = priceOption.amount;
+        }
+        const transportFee = this.bookingForm.houseCall ? 50 : 0;
+        this.totalPrice = price + transportFee;
+      },
+
+      toggleAddressContainer() {
+        this.showAddressInput = this.bookingForm.houseCall;
+      },
+
+      submitBooking() {
+        if(!this.bookingForm.name || !this.bookingForm.phone || !this.bookingForm.serviceId || !this.bookingForm.priceId || !this.bookingForm.date || !this.bookingForm.time) {
+          alert("Please fill out all required fields.");
+          return;
+        }
+        this.bookingModalOpen = true;
+      }
+    }));
+  });
+</script>

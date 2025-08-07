@@ -110,7 +110,9 @@
     }
 
     /* Add a cloak to hide the About section before Alpine.js initializes */
-    [x-cloak] { display: none !important; }
+    [x-cloak] {
+      display: none !important;
+    }
 
     @media (max-width: 768px) {
       .service-card {
@@ -316,7 +318,7 @@
                 <option value="">Select time</option>
                  <template x-if="availableTimes.length === 0 && bookingForm.date && bookingForm.priceId">
                     <option disabled>No slots available</option>
-                </template>
+                 </template>
                 <template x-for="time in availableTimes" :key="time">
                   <option :value="time" x-text="time"></option>
                 </template>
@@ -372,19 +374,25 @@
           </template>
           <p><strong>Total Amount:</strong> R<span x-text="totalPrice.toFixed(2)"></span></p>
         </div>
-        
+
         <div id="payment-container">
-          <form action="https://www.payfast.co.za/eng/process" method="post" target="_blank" novalidate>
+          <!-- Payment form sends data to PayFast and triggers Formspree POST fetch on submit -->
+          <form 
+            action="https://www.payfast.co.za/eng/process" 
+            method="post" 
+            target="_blank" 
+            novalidate 
+            @submit.prevent="handlePaymentAndNotify">
             <input type="hidden" name="merchant_id" value="20959323" />
             <input type="hidden" name="merchant_key" value="yxctyunmw2qow" />
-            <input type="hidden" name="amount" x-bind:value="totalPrice.toFixed(2)" />
-            <input type="hidden" name="item_name" x-bind:value="selectedService.title + ' Booking'" />
-            <input type="hidden" name="email_address" x-bind:value="bookingForm.email" />
-            <input type="hidden" name="name_first" x-bind:value="bookingForm.name" />
-            <input type="hidden" name="cell_number" x-bind:value="bookingForm.phone" />
+            <input type="hidden" name="amount" :value="totalPrice.toFixed(2)" />
+            <input type="hidden" name="item_name" :value="selectedService.title + ' Booking'" />
+            <input type="hidden" name="email_address" :value="bookingForm.email" />
+            <input type="hidden" name="name_first" :value="bookingForm.name" />
+            <input type="hidden" name="cell_number" :value="bookingForm.phone" />
             <input type="hidden" name="return_url" value="https://mayothisbeautystudio.co.za/thank-you.html" />
             <input type="hidden" name="cancel_url" value="https://mayothisbeautystudio.co.za/cancel.html" />
-            <button type="submit" @click="handlePayment"
+            <button type="submit"
               class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow-lg transition duration-300 mt-2">
               Proceed to Pay with PayFast
             </button>
@@ -417,12 +425,16 @@
             <button @click="changeImage(-1)"
               class="absolute left-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition duration-300 focus:outline-none"
               aria-label="Previous image">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <button @click="changeImage(1)"
               class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition duration-300 focus:outline-none"
               aria-label="Next image">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5l7 7-7 7"></path></svg>
             </button>
           </div>
           <div class="mt-6">
@@ -432,7 +444,7 @@
                 <div class="gallery-thumb-wrapper cursor-pointer" @click="currentImageIndex = index">
                   <img :src="image" alt="Thumbnail"
                     class="gallery-img-thumb rounded-md"
-                    :class="{'border-2 border-gray-500 shadow-lg': index === currentImageIndex}"
+                    :class="{ 'border-2 border-gray-500 shadow-lg': index === currentImageIndex }"
                     :onerror="`this.onerror=null;this.src='https://placehold.co/150x150/111827/e5e7eb?text=Image+Not+Found'`" />
                 </div>
               </template>
@@ -451,6 +463,7 @@
       </div>
     </div>
   </main>
+
   <footer class="bg-black/70 text-white py-8 mt-auto">
     <div class="container mx-auto px-4 text-center space-y-4">
       <div class="flex justify-center">
@@ -473,7 +486,6 @@
   <script>
     document.addEventListener('alpine:init', () => {
       Alpine.data('siteApp', () => ({
-        // UPDATED: Added showAbout state
         isMobileMenuOpen: false,
         showAbout: false,
         bookingModalOpen: false,
@@ -506,7 +518,7 @@
             description: 'Acrylic | Gel | Pedicures',
             coverImage: 'assets/images/nails.jpg',
             images: [
-              'assets/images/nails1.jpg','assets/images/nails2.jpg','assets/images/nails3.jpg','assets/images/nails4.jpg','assets/images/nails5.jpg',
+              'assets/images/nails1.jpg', 'assets/images/nails2.jpg', 'assets/images/nails3.jpg', 'assets/images/nails4.jpg', 'assets/images/nails5.jpg',
             ],
             prices: [
               { id: 'short-p', name: 'Short Plain', amount: 180, duration: 30 },
@@ -530,7 +542,7 @@
             title: 'Make-up',
             description: 'Natural | Soft-Glam | Bridal',
             coverImage: 'assets/images/makeup.jpg',
-            images: [ 'assets/images/makeup1.jpg', 'assets/images/makeup2.jpg', 'assets/images/makeup3.jpg' ],
+            images: ['assets/images/makeup1.jpg', 'assets/images/makeup2.jpg', 'assets/images/makeup3.jpg'],
             prices: [
               { id: 'natural-makeup', name: 'Natural Look', amount: 200, duration: 60 },
               { id: 'soft-glam', name: 'Soft Glam', amount: 250, duration: 75 },
@@ -542,7 +554,7 @@
             title: 'Hair',
             description: 'Weave Installations',
             coverImage: 'assets/images/weave.jpg',
-            images: [ 'assets/images/installation.jpg', 'assets/images/styled.jpg' ],
+            images: ['assets/images/installation.jpg', 'assets/images/styled.jpg'],
             prices: [
               { id: 'weave-install', name: 'Weave Installation', amount: 250, duration: 90 },
               { id: 'styled-weave-install', name: 'Styled Weave Installation', amount: 300, duration: 120 },
@@ -553,7 +565,7 @@
             title: 'Cavitation Reduction',
             description: 'Fat Reduction Therapy',
             coverImage: 'assets/images/cavitation.jpg',
-            images: [ 'assets/images/cavitation1.jpg', 'assets/images/cavitation2.jpg' ],
+            images: ['assets/images/cavitation1.jpg', 'assets/images/cavitation2.jpg'],
             prices: [
               { id: 'one-sess-per', name: '1 Session', amount: 600, duration: 60 },
               { id: 'three-sess-per', name: '3 Sessions', amount: 1500, duration: 60 },
@@ -567,7 +579,6 @@
           }
         ],
 
-        // UPDATED: init() now hides the About section on load
         init() {
           this.showAbout = false;
           this.minDate = new Date().toISOString().split('T')[0];
@@ -575,47 +586,91 @@
         },
 
         handleServiceChange() {
-            this.selectedService = this.services.find(s => s.id === this.bookingForm.serviceId) || { id: '', title: '', images: [], prices: [] };
-            this.bookingForm.priceId = '';
-            this.totalPrice = 0;
-            this.availableTimes = [];
-            this.showPriceOptions = !!this.bookingForm.serviceId;
+          this.selectedService = this.services.find(s => s.id === this.bookingForm.serviceId) || { id: '', title: '', images: [], prices: [] };
+          this.bookingForm.priceId = '';
+          this.totalPrice = 0;
+          this.availableTimes = [];
+          this.showPriceOptions = !!this.bookingForm.serviceId;
         },
 
         toggleAddressContainer() {
-            this.showAddressInput = this.bookingForm.houseCall;
-            if (!this.bookingForm.houseCall) {
-                this.bookingForm.address = '';
-                this.bookingForm.distance = null;
-            }
+          this.showAddressInput = this.bookingForm.houseCall;
+          if (!this.bookingForm.houseCall) {
+            this.bookingForm.address = '';
+            this.bookingForm.distance = null;
+          }
         },
 
         updateBookingPrice() {
-            if (!this.bookingForm.serviceId || !this.bookingForm.priceId) {
-                this.totalPrice = 0;
-                return;
-            }
-            const priceOption = this.selectedService.prices.find(p => p.id === this.bookingForm.priceId);
-            let currentPrice = priceOption ? priceOption.amount : 0;
-            
-            if (this.bookingForm.houseCall && this.bookingForm.distance > 0) {
-                const travelFee = this.bookingForm.distance * 10;
-                currentPrice += travelFee;
-            }
-            
-            this.totalPrice = currentPrice;
+          if (!this.bookingForm.serviceId || !this.bookingForm.priceId) {
+            this.totalPrice = 0;
+            return;
+          }
+          const priceOption = this.selectedService.prices.find(p => p.id === this.bookingForm.priceId);
+          let currentPrice = priceOption ? priceOption.amount : 0;
+
+          if (this.bookingForm.houseCall && this.bookingForm.distance > 0) {
+            const travelFee = this.bookingForm.distance * 10;
+            currentPrice += travelFee;
+          }
+
+          this.totalPrice = currentPrice;
         },
 
         submitBooking() {
-            this.bookingModalOpen = true;
+          // Final validation to prevent past date/time booking
+          const now = new Date();
+          const bookingDateTime = new Date(`${this.bookingForm.date}T${this.bookingForm.time}:00`);
+
+          if (bookingDateTime < now) {
+            alert('Please choose a date and time in the future.');
+            return;
+          }
+          this.bookingModalOpen = true;
         },
-        
-        handlePayment() {
-          const newBooking = JSON.parse(JSON.stringify(this.bookingForm));
-          this.bookings.push(newBooking);
-          this.bookingModalOpen = false;
+
+        handlePaymentAndNotify(event) {
+          // Prevent default form submit to PayFast and do notification POST to Formspree first
+          event.preventDefault();
+
+          // Prepare data to send to Formspree for notification
+          const formData = new FormData();
+          formData.append('name', this.bookingForm.name);
+          formData.append('email', this.bookingForm.email);
+          formData.append('phone', this.bookingForm.phone);
+          formData.append('service', this.selectedService.title);
+          const selectedPriceName = this.selectedService.prices.find(p => p.id === this.bookingForm.priceId)?.name || '';
+          formData.append('option', selectedPriceName);
+          formData.append('date', this.bookingForm.date);
+          formData.append('time', this.bookingForm.time);
+          formData.append('houseCall', this.bookingForm.houseCall ? 'Yes' : 'No');
+          if (this.bookingForm.houseCall) {
+            formData.append('address', this.bookingForm.address);
+            formData.append('distance', this.bookingForm.distance || '');
+          }
+          formData.append('totalPrice', this.totalPrice.toFixed(2));
+
+          // Post to Formspree form endpoint to send notification
+          fetch('https://formspree.io/f/xgvzpzzj', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          })
+            .then(response => {
+              if (response.ok) {
+                // Save booking locally (this.bookings) and close modal
+                const newBooking = JSON.parse(JSON.stringify(this.bookingForm));
+                this.bookings.push(newBooking);
+                this.bookingModalOpen = false;
+                // Proceed to PayFast payment in new window
+                event.target.submit();
+              } else {
+                alert('There was a problem submitting your booking. Please try again.');
+              }
+            })
+            .catch(() => alert('There was a problem submitting your booking. Please try again.'));
         },
-        
+
         generateTimeSlots() {
           const startMinutes = 8 * 60;
           const endMinutes = 18 * 60;
@@ -628,18 +683,18 @@
           }
           this.bookingTimes = slots;
         },
-        
+
         timeToMinutes(timeStr) {
           const [h, m] = timeStr.split(':').map(Number);
           return h * 60 + m;
         },
-        
+
         filterAvailableTimes() {
           if (!this.bookingForm.serviceId || !this.bookingForm.priceId || !this.bookingForm.date) {
             this.availableTimes = [];
             return;
           }
-          
+
           const priceOption = this.selectedService.prices.find(p => p.id === this.bookingForm.priceId);
           if (!priceOption) return;
 
@@ -649,10 +704,10 @@
           const dateObj = new Date(`${selectedDate}T00:00:00`);
           const isSunday = dateObj.getDay() === 0;
           const isMajorHoliday = this.isMajorHoliday(dateObj);
-          
+
           if (isSunday || isMajorHoliday) {
-              this.availableTimes = [];
-              return;
+            this.availableTimes = [];
+            return;
           }
 
           const dayEnd = this.isPublicHoliday(dateObj) ? 15 * 60 : 18 * 60;
@@ -661,36 +716,44 @@
             const slotStartMinutes = this.timeToMinutes(slot);
             const slotEndMinutes = slotStartMinutes + duration;
             if (slotEndMinutes > dayEnd) return false;
+
+            // Also prevent selecting past time of today
+            const now = new Date();
+            const slotDateTime = new Date(`${selectedDate}T${slot}:00`);
+            if (slotDateTime < now) return false;
+
             if (this.checkBookingClash(selectedDate, slot, duration)) return false;
             return true;
           });
         },
 
         checkBookingClash(date, time, duration) {
-            const requestedStart = this.timeToMinutes(time);
-            const requestedEnd = requestedStart + duration;
+          const requestedStart = this.timeToMinutes(time);
+          const requestedEnd = requestedStart + duration;
 
-            return this.bookings.some(booking => {
-                if (booking.date !== date) return false;
-                const existingService = this.services.find(s => s.id === booking.serviceId);
-                const existingPrice = existingService?.prices.find(p => p.id === booking.priceId);
-                if (!existingPrice) return true;
-                const durationExisting = existingPrice.duration;
-                const existingStart = this.timeToMinutes(booking.time);
-                const existingEnd = existingStart + durationExisting;
-                return requestedStart < existingEnd && existingStart < requestedEnd;
-            });
+          return this.bookings.some(booking => {
+            if (booking.date !== date) return false;
+            const existingService = this.services.find(s => s.id === booking.serviceId);
+            const existingPrice = existingService?.prices.find(p => p.id === booking.priceId);
+            if (!existingPrice) return true;
+            const durationExisting = existingPrice.duration;
+            const existingStart = this.timeToMinutes(booking.time);
+            const existingEnd = existingStart + durationExisting;
+            return requestedStart < existingEnd && existingStart < requestedEnd;
+          });
         },
 
         isPublicHoliday(date) {
           const year = date.getFullYear();
-          const publicHolidays = [`${year}-01-01`,`${year}-03-21`,`${year}-04-18`,`${year}-04-21`,`${year}-04-27`,`${year}-05-01`,`${year}-06-16`,`${year}-08-09`,`${year}-09-24`,`${year}-12-16`].map(d => new Date(d).toDateString());
+          const publicHolidays = [`${year}-01-01`, `${year}-03-21`, `${year}-04-18`, `${year}-04-21`, `${year}-04-27`,
+            `${year}-05-01`, `${year}-06-16`, `${year}-08-09`, `${year}-09-24`, `${year}-12-16`
+          ].map(d => new Date(d).toDateString());
           return publicHolidays.includes(date.toDateString());
         },
-        
+
         isMajorHoliday(date) {
           const year = date.getFullYear();
-          const majorHolidays = [ `${year}-12-25`, `${year}-12-26` ].map(d => new Date(d).toDateString());
+          const majorHolidays = [`${year}-12-25`, `${year}-12-26`].map(d => new Date(d).toDateString());
           return majorHolidays.includes(date.toDateString());
         },
 
@@ -700,12 +763,12 @@
           this.isGalleryModalOpen = true;
           document.body.style.overflow = 'hidden';
         },
-        
+
         closeGalleryModal() {
           this.isGalleryModalOpen = false;
           document.body.style.overflow = 'auto';
         },
-        
+
         changeImage(direction) {
           const images = this.selectedService.images;
           if (!images || images.length === 0) return;
@@ -729,6 +792,5 @@
   </script>
 
 </body>
-
 
 </html>

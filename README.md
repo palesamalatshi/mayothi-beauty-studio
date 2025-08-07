@@ -15,7 +15,8 @@ This is a volunteer project built for Mayothis Beauty Studio to create a profess
 
 ## 🌐 Live Website
 You can view the live website here:
-[Insert Link to Your Live Website Here]
+https://palesamalatshi.github.io/mayothi-beauty-studio/
 
 ---
 This project was built by Palesa Malatshi as a volunteer contribution.
+
